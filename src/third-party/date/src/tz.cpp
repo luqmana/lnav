@@ -349,7 +349,9 @@ discover_tz_dir()
 {
     struct stat sb;
     using namespace std;
-#  ifndef __APPLE__
+#  ifdef __illumos__
+    return "/usr/share/lib/zoneinfo";
+#  elif !defined(__APPLE__)
     CONSTDATA auto tz_dir_default = "/usr/share/zoneinfo";
     CONSTDATA auto tz_dir_buildroot = "/usr/share/zoneinfo/uclibc";
 

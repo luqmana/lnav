@@ -202,7 +202,7 @@ dnl         AC_DEFINE([_BSD_SOURCE], [1], [Need pread])
 dnl         ;;
 dnl esac
 
-AC_DEFINE([_XOPEN_SOURCE_EXTENDED], [1], [Wide character support for ncurses])
+dnl AC_DEFINE([_XOPEN_SOURCE_EXTENDED], [1], [Wide character support for ncurses])
 
 AS_VAR_SET(ALL_LDFLAGS, "$SQLITE3_LDFLAGS $READLINE_LDFLAGS $LIBARCHIVE_LDFLAGS $LIBCURL $LDFLAGS")
 
@@ -295,6 +295,9 @@ AS_CASE(["$host_os"],
         ])dnl
     ]dnl
 )
+
+AS_CASE(["$host_os"],
+        [solaris*], [LDFLAGS="$LDFLAGS -lsocket"])
 
 saved_location=$(pwd)
 cd $srcdir

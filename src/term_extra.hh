@@ -40,6 +40,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+
+#if defined(__illumos__)
+#    include <netdb.h>
+#endif
+
 #include "listview_curses.hh"
 #include "log_format_fwd.hh"
 #include "logfile.hh"

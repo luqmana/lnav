@@ -27,6 +27,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __illumos__
+#    include <termios.h>
+#endif
+
 #include "view_helpers.hh"
 
 #include "base/itertools.hh"

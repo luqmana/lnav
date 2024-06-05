@@ -29,7 +29,7 @@
  * @file shlex.cc
  */
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined(__illumos__)
 #    include <alloca.h>
 #endif
 

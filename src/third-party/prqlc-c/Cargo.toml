@@ -21,7 +21,7 @@ doc = false
 
 [dependencies]
 prqlc = { git = "https://github.com/PRQL/prql.git" }
-cxx = "1.0"
+cxx = { git = "https://github.com/luqmana/cxx.git", branch = "char-if-unique" }
 
 [build-dependencies]
 cxx-build = "1.0"

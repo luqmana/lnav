@@ -47,7 +47,11 @@ time_t time(time_t *loc)
     return retval;
 }
 
+#ifdef __illumos__
+int gettimeofday(struct timeval *tv, void *tz)
+#else
 int gettimeofday(struct timeval *tv, struct timezone *tz)
+#endif
 {
     tv->tv_sec = 1370546000;
     tv->tv_usec = 123456;

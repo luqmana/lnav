@@ -873,7 +873,7 @@ read_json_number(yajlpp_parse_context* ypc,
         struct timeval tv;
 
         tv.tv_sec = val / divisor;
-        tv.tv_usec = fmod(val, divisor) * (1000000.0 / divisor);
+        tv.tv_usec = std::fmod(val, divisor) * (1000000.0 / divisor);
         jlu->jlu_format->lf_date_time.to_localtime(tv.tv_sec, jlu->jlu_exttm);
         tv.tv_sec = tm2sec(&jlu->jlu_exttm.et_tm);
         jlu->jlu_exttm.et_gmtoff
@@ -1028,7 +1028,7 @@ rewrite_json_int(yajlpp_parse_context* ypc, long long val)
         struct timeval tv;
 
         tv.tv_sec = val / divisor;
-        tv.tv_usec = fmod(val, divisor) * (1000000.0 / divisor);
+        tv.tv_usec = std::fmod(val, divisor) * (1000000.0 / divisor);
         jlu->jlu_format->lf_date_time.to_localtime(tv.tv_sec, jlu->jlu_exttm);
         jlu->jlu_exttm.et_gmtoff
             = jlu->jlu_format->lf_date_time.dts_local_offset_cache;
@@ -1080,7 +1080,7 @@ rewrite_json_double(yajlpp_parse_context* ypc, double val)
         struct timeval tv;
 
         tv.tv_sec = val / divisor;
-        tv.tv_usec = fmod(val, divisor) * (1000000.0 / divisor);
+        tv.tv_usec = std::fmod(val, divisor) * (1000000.0 / divisor);
         jlu->jlu_format->lf_date_time.to_localtime(tv.tv_sec, jlu->jlu_exttm);
         jlu->jlu_exttm.et_gmtoff
             = jlu->jlu_format->lf_date_time.dts_local_offset_cache;

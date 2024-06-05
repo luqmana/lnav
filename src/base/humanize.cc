@@ -40,7 +40,7 @@ namespace humanize {
 std::string
 file_size(file_ssize_t value, alignment align)
 {
-    static const double LN1024 = log(1024.0);
+    static const double LN1024 = std::log(1024.0);
     static const std::vector<const char*> UNITS = {
         " ",
         "K",
@@ -65,7 +65,7 @@ file_size(file_ssize_t value, alignment align)
     }
 
     auto exp
-        = floor(std::min(log(value) / LN1024, (double) (UNITS.size() - 1)));
+        = floor(std::min(std::log(value) / LN1024, (double) (UNITS.size() - 1)));
     auto divisor = pow(1024, exp);
 
     if (align == alignment::none && divisor <= 1) {

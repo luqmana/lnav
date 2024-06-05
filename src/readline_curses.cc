@@ -39,6 +39,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#ifdef __illumos__
+#    include <termios.h>
+#    include <sys/stropts.h>
+#    include <sys/ptms.h>
+#    include <sys/sysmacros.h>
+#endif
+
 #include "config.h"
 
 #ifdef HAVE_PTY_H
@@ -800,6 +807,59 @@ readline_curses::store_matches(char** matches, int num_matches, int max_len)
     }
 }
 
+// Based on impl in gnulib
+#ifdef __illumos__
+int
+ptsname_r(int fd, char *buf, size_t buflen)
+{
+    int saved_errno = errno;
+    struct stat st;
+    struct strioctl ioctl_arg;
+    char tmp[20];
+
+    if (buf == NULL)
+    {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (fstat(fd, &st) < 0)
+        return -1;
+
+    if (!S_ISCHR (st.st_mode))
+    {
+        errno = ENOTTY;
+        return -1;
+    }
+
+    ioctl_arg.ic_cmd = ISPTM;
+    ioctl_arg.ic_timout = 0;
+    ioctl_arg.ic_len = 0;
+    ioctl_arg.ic_dp = NULL;
+
+    if (ioctl (fd, I_STR, &ioctl_arg) < 0)
+    {
+        errno = ENOTTY;
+        return -1;
+    }
+
+    int n = sprintf (tmp, "/dev/pts/%u", minor (st.st_rdev));
+    if (n >= buflen)
+    {
+        errno = ERANGE;
+        return -1;
+    }
+
+    memcpy (buf, tmp, n + 1);
+
+    if (stat (buf, &st) < 0 && errno != EOVERFLOW)
+        return -1;
+
+    errno = saved_errno;
+    return 0;
+}
+#endif
+
 void
 readline_curses::start()
 {
@@ -871,6 +931,16 @@ readline_curses::start()
         throw error(errno);
     }
     this->rc_pty[RCF_SLAVE] = slave_open_res.unwrap();
+
+#ifdef __illumos__
+    if (ioctl(this->rc_pty[RCF_SLAVE], I_PUSH, "ptem") == -1 ||
+        ioctl(this->rc_pty[RCF_SLAVE], I_PUSH, "ldterm") == -1 ||
+        ioctl(this->rc_pty[RCF_SLAVE], I_PUSH, "ttcompat") == -1) {
+        log_error("failed to push ptem/ldterm/ttcompat modules -- %s",
+            strerror(errno));
+        throw error(errno);
+    }
+#endif
 
     if (ioctl(this->rc_pty[RCF_SLAVE], TIOCSWINSZ, &ws) == -1) {
         throw error(errno);
